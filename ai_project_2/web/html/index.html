@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Fraude - Análise de Transações</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Detetor de Fraude Bancária</h1>
+                <p>Análise inteligente de transações suspeitas</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <section class="panel input-panel">
+                    <h2>Dados da Transação</h2>
+                    <form id="predictionForm">
+                        <div class="form-group">
+                            <label for="type">
+                                <span class="label-text">Tipo de Transação</span>
+                                <span class="help-icon" title="Selecione o tipo de transação a realizar">?</span>
+                            </label>
+                            <select id="type" name="type" required>
+                                <option value="">Selecione uma opção...</option>
+                                <option value="CASH_IN">Levantamento de Dinheiro</option>
+                                <option value="CASH_OUT">Levantamento de Dinheiro</option>
+                                <option value="DEBIT">Débito</option>
+                                <option value="PAYMENT">Pagamento</option>
+                                <option value="TRANSFER">Transferência</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">
+                                <span class="label-text">Montante (€)</span>
+                                <span class="help-icon" title="Valor da transação em euros">?</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input 
+                                    type="number" 
+                                    id="amount" 
+                                    name="amount" 
+                                    min="0" 
+                                    max="100000" 
+                                    step="100" 
+                                    value="1000"
+                                    required
+                                >
+                                <span class="unit">€</span>
+                            </div>
+                            <input type="range" id="amountRange" min="0" max="100000" step="100" value="1000">
+                        </div>
+                        <div class="form-group">
+                            <label for="step">
+                                <span class="label-text">Passo</span>
+                                <span class="help-icon" title="Número sequencial na simulação">?</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="step" 
+                                name="step" 
+                                min="1" 
+                                max="743" 
+                                step="1" 
+                                value="100"
+                                required
+                            >
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hour_of_day">
+                                    <span class="label-text">Hora</span>
+                                    <span class="help-icon" title="Hora do dia (0-23)">?</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="hour_of_day" 
+                                    name="hour_of_day" 
+                                    min="0" 
+                                    max="23" 
+                                    step="1" 
+                                    value="12"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="day_of_week">
+                                    <span class="label-text">Dia da Semana</span>
+                                    <span class="help-icon" title="Dia em que a transação ocorre">?</span>
+                                </label>
+                                <select id="day_of_week" name="day_of_week" required>
+                                    <option value="0">Segunda-feira</option>
+                                    <option value="1">Terça-feira</option>
+                                    <option value="2">Quarta-feira</option>
+                                    <option value="3">Quinta-feira</option>
+                                    <option value="4">Sexta-feira</option>
+                                    <option value="5">Sábado</option>
+                                    <option value="6">Domingo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="balance-section">
+                            <h3>Informação de Saldos</h3>
+                            
+                            <div class="balance-pair">
+                                <div class="form-group">
+                                    <label for="oldbalanceOrg">
+                                        <span class="label-text">Saldo Anterior - Origem (€)</span>
+                                        <span class="help-icon" title="Saldo antes da transação">?</span>
+                                    </label>
+                                    <div class="input-with-unit">
+                                        <input 
+                                            type="number" 
+                                            id="oldbalanceOrg" 
+                                            name="oldbalanceOrg" 
+                                            min="0" 
+                                            max="1000000" 
+                                            step="1000" 
+                                            value="10000"
+                                            required
+                                        >
+                                        <span class="unit">€</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newbalanceOrig">
+                                        <span class="label-text">Saldo Novo - Origem (€)</span>
+                                        <span class="help-icon" title="Saldo após a transação">?</span>
+                                    </label>
+                                    <div class="input-with-unit">
+                                        <input 
+                                            type="number" 
+                                            id="newbalanceOrig" 
+                                            name="newbalanceOrig" 
+                                            min="0" 
+                                            max="1000000" 
+                                            step="1000" 
+                                            value="9000"
+                                            required
+                                        >
+                                        <span class="unit">€</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="balance-pair">
+                                <div class="form-group">
+                                    <label for="oldbalanceDest">
+                                        <span class="label-text">Saldo Anterior - Destino (€)</span>
+                                        <span class="help-icon" title="Saldo destino antes">?</span>
+                                    </label>
+                                    <div class="input-with-unit">
+                                        <input 
+                                            type="number" 
+                                            id="oldbalanceDest" 
+                                            name="oldbalanceDest" 
+                                            min="0" 
+                                            max="1000000" 
+                                            step="1000" 
+                                            value="5000"
+                                            required
+                                        >
+                                        <span class="unit">€</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newbalanceDest">
+                                        <span class="label-text">Saldo Novo - Destino (€)</span>
+                                        <span class="help-icon" title="Saldo destino após">?</span>
+                                    </label>
+                                    <div class="input-with-unit">
+                                        <input 
+                                            type="number" 
+                                            id="newbalanceDest" 
+                                            name="newbalanceDest" 
+                                            min="0" 
+                                            max="1000000" 
+                                            step="1000" 
+                                            value="6000"
+                                            required
+                                        >
+                                        <span class="unit">€</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="panel results-panel">
+                    <h2>Resultado da Análise</h2>
+                    
+                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Analisando transação...</p>
+                    </div>
+
+                    <div id="resultsContent" style="display: none;">
+                        <div id="predictionResult" class="prediction-result">
+                            <div class="result-badge" id="resultBadge">
+                                <div class="badge-text">
+                                    <div class="badge-title">Transação Legítima</div>
+                                    <div class="badge-subtitle">Risco baixo</div>
+                                </div>
+                            </div>
+                            
+                            <div class="probability-section">
+                                <div class="probability-label">
+                                    <span>Probabilidade de Fraude</span>
+                                    <span id="probabilityValue" class="probability-value">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-section">
+                            <h3>Features Calculadas</h3>
+                            <div class="features-grid">
+                                <div class="feature-card">
+                                    <div class="feature-label">Erro no Saldo - Origem</div>
+                                    <div id="errorBalanceOrig" class="feature-value">0.00</div>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-label">Erro no Saldo - Destino</div>
+                                    <div id="errorBalanceDest" class="feature-value">0.00</div>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-label">Log do Montante</div>
+                                    <div id="amount_log" class="feature-value">0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="welcomeMessage" class="welcome-message">
+                        <p>Preencha os dados da transação para começar a análise</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
